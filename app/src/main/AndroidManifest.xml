@@ -1,39 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="wenchao.kiosk" >
+    package="wenchao.kiosk">
+
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".KioskActivity"
+            android:keepScreenOn="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"
-            android:keepScreenOn="true">
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
-        <receiver android:name=".MyAdmin"
-            android:label="@string/sample_device_admin"
+        <receiver
+            android:name=".MyAdmin"
             android:description="@string/sample_device_admin_description"
+            android:label="@string/sample_device_admin"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
-            <meta-data android:name="android.app.device_admin"
+            <meta-data
+                android:name="android.app.device_admin"
                 android:resource="@xml/my_admin" />
+
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".onbootListener"
+            android:enabled="true"
+            android:directBootAware="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <category android:name="android.intent.category.DEFAULT" />
+
+            </intent-filter>
+
+        </receiver>
+
+
     </application>
+
 </manifest>

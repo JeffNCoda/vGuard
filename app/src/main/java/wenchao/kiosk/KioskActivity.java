@@ -1,10 +1,15 @@
 package wenchao.kiosk;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -22,7 +27,7 @@ public class KioskActivity extends Activity {
         4. Disable volume botton if required
         5. stop screen to turn off, or lock
      */
-
+    private final int REQ_BOOT = 132;
     final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -33,11 +38,20 @@ public class KioskActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(this.checkSelfPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_DENIED){
+                this.requestPermissions(new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, REQ_BOOT);
+                return;
+            }
+        }
+
+        initReceiver();
         /* Set the app into full screen mode */
         getWindow().getDecorView().setSystemUiVisibility(flags);
 
         /* Following code allow the app packages to lock task in true kiosk mode */
-        setContentView(wenchao.kiosk.R.layout.activity_lock_activity);
+        setContentView(R.layout.activity_lock_activity);
         // get policy manager
         DevicePolicyManager myDevicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         // get this app package name
@@ -55,24 +69,29 @@ public class KioskActivity extends Activity {
 
         setVolumMax();
 
-        Button lock_btn = (Button)findViewById(wenchao.kiosk.R.id.lock_button);
-        Button unlock_btn = (Button)findViewById(wenchao.kiosk.R.id.unlock_button);
+        Button lock_btn = (Button)findViewById(R.id.lock_button);
+        Button unlock_btn = (Button)findViewById(R.id.unlock_button);
 
-        lock_btn.setOnTouchListener(new View.OnTouchListener() {
+        lock_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View v) {
                 startLockTask();
-                return false;
             }
         });
 
-        unlock_btn.setOnTouchListener(new View.OnTouchListener() {
+        unlock_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View v) {
                 stopLockTask();
-                return false;
             }
         });
+    }
+
+    private void initReceiver() {
+        onbootListener onbootListener = new onbootListener();
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BOOT_COMPLETED);
+        filter.addAction(Intent.ACTION_LOCKED_BOOT_COMPLETED);
+        this.registerReceiver(onbootListener, filter);
     }
 
     @Override
