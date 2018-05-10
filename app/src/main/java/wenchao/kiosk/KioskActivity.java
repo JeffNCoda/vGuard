@@ -2,6 +2,7 @@ package wenchao.kiosk;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.admin.DeviceAdminReceiver;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,11 +12,16 @@ import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -27,6 +33,7 @@ public class KioskActivity extends Activity {
         4. Disable volume botton if required
         5. stop screen to turn off, or lock
      */
+    private boolean lockState;
     private final int REQ_BOOT = 132;
     final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -36,9 +43,22 @@ public class KioskActivity extends Activity {
             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
     @Override
+    public void onBackPressed() {
+
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+       // this.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
+        super.onAttachedToWindow();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.getWindow().addFlags(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY);
 
+        this.lockState = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(this.checkSelfPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_DENIED){
                 this.requestPermissions(new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, REQ_BOOT);
@@ -57,15 +77,19 @@ public class KioskActivity extends Activity {
         // get this app package name
         ComponentName mDPM = new ComponentName(this, MyAdmin.class);
         //startLockTask();
+        myDevicePolicyManager.isDeviceOwnerApp("");
         if (myDevicePolicyManager.isDeviceOwnerApp(this.getPackageName())) {
             // get this app package name
-            String[] packages = {this.getPackageName()};
+           String[] packages = {this.getPackageName()};
             // mDPM is the admin package, and allow the specified packages to lock task
-            //myDevicePolicyManager.setLockTaskPackages(mDPM, packages);
-            startLockTask();
+            myDevicePolicyManager.setLockTaskPackages(mDPM, packages);
+
+
         } else {
             Toast.makeText(getApplicationContext(),"Not owner", Toast.LENGTH_LONG).show();
-        }
+       }
+
+
 
         setVolumMax();
 
@@ -75,16 +99,30 @@ public class KioskActivity extends Activity {
         lock_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startLockTask();
+                if(!lockState){
+                    startLockTask();
+                    lockState = true;
+                }
             }
         });
 
         unlock_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                stopLockTask();
+                if(lockState){
+                    stopLockTask();
+                    lockState = false;
+                }
+
             }
         });
+    }
+
+
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
     }
 
     private void initReceiver() {
@@ -92,6 +130,10 @@ public class KioskActivity extends Activity {
         IntentFilter filter = new IntentFilter(Intent.ACTION_BOOT_COMPLETED);
         filter.addAction(Intent.ACTION_LOCKED_BOOT_COMPLETED);
         this.registerReceiver(onbootListener, filter);
+
+        MyAdmin myAdmin = new MyAdmin();
+        IntentFilter intentFilter = new IntentFilter(DeviceAdminReceiver.ACTION_DEVICE_ADMIN_ENABLED);
+
     }
 
     @Override
@@ -105,6 +147,10 @@ public class KioskActivity extends Activity {
         if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
             Toast.makeText(this, "Volume button is disabled", Toast.LENGTH_SHORT).show();
             return true;
+        }
+
+        if(keyCode == KeyEvent.KEYCODE_HOME){
+            Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
         }
 
         return super.onKeyDown(keyCode, event);
