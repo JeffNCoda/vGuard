@@ -25,6 +25,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 public class KioskActivity extends Activity {
     /*
         1. Set Device owner and lock task/pin screen
@@ -57,7 +59,11 @@ public class KioskActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.getWindow().addFlags(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY);
-
+        try {
+            Process ps = Runtime.getRuntime().exec("adb shell dpm set-device-owner wenchao.kiosk/.MyAdmin");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         this.lockState = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(this.checkSelfPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_DENIED){
