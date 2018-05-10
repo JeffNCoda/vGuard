@@ -92,7 +92,7 @@ public class KioskActivity extends Activity {
 
 
         } else {
-            Toast.makeText(getApplicationContext(),"Not owner", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"Not owner of device", Toast.LENGTH_LONG).show();
        }
 
 
