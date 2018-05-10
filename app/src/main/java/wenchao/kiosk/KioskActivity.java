@@ -49,6 +49,7 @@ public class KioskActivity extends Activity {
 
     }
 
+
     @Override
     public void onAttachedToWindow() {
        // this.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
@@ -88,7 +89,9 @@ public class KioskActivity extends Activity {
             // get this app package name
            String[] packages = {this.getPackageName()};
             // mDPM is the admin package, and allow the specified packages to lock task
-            myDevicePolicyManager.setLockTaskPackages(mDPM, packages);
+            myDevicePolicyManager.setLockTaskPackages(mDPM, packages);startLockTask();
+
+            Toast.makeText(getApplicationContext(),"I is owner of device", Toast.LENGTH_LONG).show();
 
 
         } else {
