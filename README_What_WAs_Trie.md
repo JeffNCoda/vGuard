@@ -1,6 +1,6 @@
 
 ##Current problem
-1.Onboot the sys (can be bypassed) the kiosk mode
+1. Onboot the sys (can be bypassed) the kiosk mode
 2. requires constant privi
 3. long home press exit the kiosk (huge problem) // since it different for multiple systems
 4. once off sys setup
