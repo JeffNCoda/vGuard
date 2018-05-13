@@ -59,11 +59,8 @@ public class KioskActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.getWindow().addFlags(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY);
-        try {
-            Process ps = Runtime.getRuntime().exec("adb shell dpm set-device-owner wenchao.kiosk/.MyAdmin");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setContentView(R.layout.activity_lock_activity);
+
         this.lockState = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(this.checkSelfPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_DENIED){
@@ -72,12 +69,14 @@ public class KioskActivity extends Activity {
             }
         }
 
-        initReceiver();
+        Intent intent = new Intent(this, DispatcherService.class);
+        this.startService(intent);
+
         /* Set the app into full screen mode */
-        getWindow().getDecorView().setSystemUiVisibility(flags);
+        //getWindow().getDecorView().setSystemUiVisibility(flags);
 
         /* Following code allow the app packages to lock task in true kiosk mode */
-        setContentView(R.layout.activity_lock_activity);
+
         // get policy manager
         DevicePolicyManager myDevicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         // get this app package name
@@ -89,15 +88,11 @@ public class KioskActivity extends Activity {
            String[] packages = {this.getPackageName()};
             // mDPM is the admin package, and allow the specified packages to lock task
             myDevicePolicyManager.setLockTaskPackages(mDPM, packages);
-
-
         } else {
             Toast.makeText(getApplicationContext(),"Not owner of device", Toast.LENGTH_LONG).show();
-       }
+        }
 
-
-
-        setVolumMax();
+        //setVolumMax();
 
         Button lock_btn = (Button)findViewById(R.id.lock_button);
         Button unlock_btn = (Button)findViewById(R.id.unlock_button);
@@ -131,16 +126,7 @@ public class KioskActivity extends Activity {
         super.onWindowFocusChanged(hasFocus);
     }
 
-    private void initReceiver() {
-        onbootListener onbootListener = new onbootListener();
-        IntentFilter filter = new IntentFilter(Intent.ACTION_BOOT_COMPLETED);
-        filter.addAction(Intent.ACTION_LOCKED_BOOT_COMPLETED);
-        this.registerReceiver(onbootListener, filter);
 
-        MyAdmin myAdmin = new MyAdmin();
-        IntentFilter intentFilter = new IntentFilter(DeviceAdminReceiver.ACTION_DEVICE_ADMIN_ENABLED);
-
-    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event){

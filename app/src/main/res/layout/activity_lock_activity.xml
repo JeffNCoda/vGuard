@@ -3,7 +3,7 @@
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".lock_activity">
+    android:paddingBottom="@dimen/activity_vertical_margin" >
 
     <Button
         android:layout_width="wrap_content"
@@ -11,7 +11,8 @@
         android:text="LOCk"
         android:id="@+id/lock_button"
         android:layout_centerVertical="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:visibility="invisible"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -19,6 +20,15 @@
         android:text="UNLOCK"
         android:id="@+id/unlock_button"
         android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:text="Kiosk is now setup. Turn screen on and off to start kiosk."/>
 
 </RelativeLayout>

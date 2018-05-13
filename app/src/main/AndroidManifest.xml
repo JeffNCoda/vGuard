@@ -2,10 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="wenchao.kiosk">
 
-
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:allowBackup="true"
@@ -15,16 +14,14 @@
         <activity
             android:name=".KioskActivity"
             android:keepScreenOn="true"
-            android:lockTaskMode="if_whitelisted"
             android:label="@string/app_name"
+            android:excludeFromRecents="true"
             android:launchMode="singleTask"
+            android:lockTaskMode="if_whitelisted"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -33,44 +30,52 @@
             android:name=".MyAdmin"
             android:description="@string/sample_device_admin_description"
             android:label="@string/sample_device_admin"
-            android:permission="android.permission.BIND_DEVICE_ADMIN" >
-
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
                 android:name="android.app.device_admin"
-                android:resource="@xml/my_admin" >
-            </meta-data>
+                android:resource="@xml/my_admin" />
 
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
-
         <receiver
-        android:name=".MyAdmin"
-        android:label="@string/sample_device_admin"
-        android:description="@string/sample_device_admin_description"
-        android:permission="android.permission.BIND_DEVICE_ADMIN">
-        <meta-data android:name="android.app.device_admin" android:resource="@xml/my_admin" />
-        <intent-filter>
-            <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-        </intent-filter>
-    </receiver>
+            android:name=".MyAdmin"
+            android:description="@string/sample_device_admin_description"
+            android:label="@string/sample_device_admin"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/my_admin" />
 
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
         <receiver
             android:name=".onbootListener"
-            android:enabled="true"
             android:directBootAware="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter android:priority="800">
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
                 <category android:name="android.intent.category.DEFAULT" />
-
             </intent-filter>
-
         </receiver>
 
+        <activity android:name=".BaseKiosk"
+           android:launchMode="singleTask" />
 
+        <service
+            android:name=".DispatcherService"
+            android:enabled="true"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:keepScreenOn="true"></service>
     </application>
 
 </manifest>
