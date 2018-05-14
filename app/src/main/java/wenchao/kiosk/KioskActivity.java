@@ -58,10 +58,12 @@ public class KioskActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.getWindow().addFlags(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY);
+        //this.getWindow().addFlags(WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY);
         setContentView(R.layout.activity_lock_activity);
 
         this.lockState = false;
+
+        //Check weather we have permission to receive high level events from the system.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(this.checkSelfPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_DENIED){
                 this.requestPermissions(new String[]{Manifest.permission.RECEIVE_BOOT_COMPLETED}, REQ_BOOT);
@@ -69,8 +71,18 @@ public class KioskActivity extends Activity {
             }
         }
 
+        //Start the background service that will register the receiver for system events.
         Intent intent = new Intent(this, DispatcherService.class);
         this.startService(intent);
+
+
+
+
+
+
+
+      /** the following code is not used in this version and will be remove later on*/
+
 
         /* Set the app into full screen mode */
         //getWindow().getDecorView().setSystemUiVisibility(flags);
@@ -117,17 +129,18 @@ public class KioskActivity extends Activity {
 
             }
         });
+
     }
 
 
-
+    /** Method not used in this version.*/
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
     }
 
 
-
+    /** Method not used in this version.*/
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event){
 
@@ -148,6 +161,7 @@ public class KioskActivity extends Activity {
         return super.onKeyDown(keyCode, event);
     }
 
+    /** Method not used in this version.*/
     private void setVolumMax(){
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         am.setStreamVolume(
