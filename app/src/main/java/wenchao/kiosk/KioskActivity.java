@@ -133,33 +133,7 @@ public class KioskActivity extends Activity {
     }
 
 
-    /** Method not used in this version.*/
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-    }
 
-
-    /** Method not used in this version.*/
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event){
-
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP){
-            Toast.makeText(this, "Volume button is disabled", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN){
-            Toast.makeText(this, "Volume button is disabled", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-
-        if(keyCode == KeyEvent.KEYCODE_HOME){
-            Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
 
     /** Method not used in this version.*/
     private void setVolumMax(){
@@ -169,6 +143,7 @@ public class KioskActivity extends Activity {
                 am.getStreamMaxVolume(AudioManager.STREAM_SYSTEM),
                 0);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

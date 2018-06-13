@@ -69,26 +69,5 @@ public class DispatcherService extends Service {
         /** Lastly we tell the system to register our receiver with the filters.*/
         this.registerReceiver(onbootListener, filter);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ActivityManager activityManager = (ActivityManager)DispatcherService.this.getBaseContext().getSystemService(Context.ACTIVITY_SERVICE);
-                String prev = "";
-                boolean e = true;
-                while(true){
-                    List<ActivityManager.RunningAppProcessInfo> apps  = activityManager.getRunningAppProcesses();
-                    if(apps.size() > 0){
-                        String curr = apps.get(0).processName;
-                        if(!DispatcherService.this.getBaseContext().getPackageName().contains(curr) && e){
-                            Intent i = new Intent("GD.FG");
-                            DispatcherService.this.sendBroadcast(i);
-                            Log.i("Sgj", "L");
-                            break;
-                        }
-                    }
-                }
-            }
-        }).start();
-
     }
 }
