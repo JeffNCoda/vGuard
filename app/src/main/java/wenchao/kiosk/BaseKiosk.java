@@ -99,6 +99,12 @@ this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
             case KeyEvent.KEYCODE_HOME:
                 Log.i("Sgj", "HOME");
                 return  true;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                case KeyEvent.KEYCODE_VOLUME_DOWN:
+                    case KeyEvent.KEYCODE_VOLUME_MUTE:
+                        Toast.makeText(this, "Volume is Blocked", Toast.LENGTH_SHORT).show();
+                        return true;
+
 
         }
         return false;
@@ -162,7 +168,33 @@ class HomeKeyLocker {
             setCancelable(false);
         }
 
+        @Override
+        public void onWindowFocusChanged(boolean hasFocus) {
+            super.onWindowFocusChanged(hasFocus);
+            if(!hasFocus) {
+                Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+               this.getContext().sendBroadcast(closeDialog);
+            }
+        }
+
+        @Override
+        public boolean onKeyDown(int keyCode, KeyEvent event) {
+            switch(keyCode){
+                case KeyEvent.KEYCODE_VOLUME_UP:
+                    case KeyEvent.KEYCODE_VOLUME_DOWN:
+                        case KeyEvent.KEYCODE_VOLUME_MUTE:
+                    return true;
+                    case KeyEvent.KEYCODE_POWER:
+                        Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+                        this.getContext().sendBroadcast(closeDialog);
+                        return true;
+
+            }
+            return super.onKeyDown(keyCode, event);
+        }
+
         public final boolean dispatchTouchEvent(MotionEvent motionevent) {
+            Toast.makeText(this.getContext(), motionevent.getAction() + "s", Toast.LENGTH_SHORT).show();
             return true;
         }
 
