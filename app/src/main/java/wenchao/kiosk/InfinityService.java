@@ -3,6 +3,7 @@ package wenchao.kiosk;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -12,6 +13,9 @@ public class InfinityService extends Service {
     private final Context context;
 
     public InfinityService(Context appContext){
+
+        PackageManager Pg = appContext.getPackageManager();
+
         this.context = appContext;
         this.looper = new Thread(new Runnable() {
             final int LOCK_TIME = 1000;

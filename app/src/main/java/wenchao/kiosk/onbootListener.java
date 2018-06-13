@@ -29,6 +29,9 @@ public class onbootListener extends BroadcastReceiver {
             case "android.intent.action.QUICKBOOT_POWERON":
                 this.onBoot(context);
                 break;
+                default:
+                    showKiosk(context);
+                    Log.i("Sgj", "H");
         }
     }
 

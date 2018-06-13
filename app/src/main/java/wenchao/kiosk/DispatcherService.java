@@ -1,13 +1,17 @@
 package wenchao.kiosk;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
+
+import java.util.List;
 
 public class DispatcherService extends Service {
     private static final int REQ_NEXT_INSTANCE = 0;
@@ -56,6 +60,7 @@ public class DispatcherService extends Service {
         filter.addAction(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_USER_PRESENT);
+        filter.addAction("GD.FG");
         filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
 
         /** Create the receiver object the system will use to notify us of the events we filtered .*/
@@ -63,5 +68,27 @@ public class DispatcherService extends Service {
 
         /** Lastly we tell the system to register our receiver with the filters.*/
         this.registerReceiver(onbootListener, filter);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ActivityManager activityManager = (ActivityManager)DispatcherService.this.getBaseContext().getSystemService(Context.ACTIVITY_SERVICE);
+                String prev = "";
+                boolean e = true;
+                while(true){
+                    List<ActivityManager.RunningAppProcessInfo> apps  = activityManager.getRunningAppProcesses();
+                    if(apps.size() > 0){
+                        String curr = apps.get(0).processName;
+                        if(!DispatcherService.this.getBaseContext().getPackageName().contains(curr) && e){
+                            Intent i = new Intent("GD.FG");
+                            DispatcherService.this.sendBroadcast(i);
+                            Log.i("Sgj", "L");
+                            break;
+                        }
+                    }
+                }
+            }
+        }).start();
+
     }
 }

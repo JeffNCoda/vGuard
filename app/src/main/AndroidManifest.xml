@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
         android:allowBackup="true"
@@ -59,13 +60,14 @@
             android:directBootAware="true"
             android:enabled="true"
             android:exported="false">
-            <intent-filter android:priority="800">
+            <intent-filter android:priority="800">0
                 <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
                 <action android:name="android.intent.action.USER_PRESENT" />
                 <action android:name="android.intent.action.SCREEN_ON" />
                 <action android:name="android.intent.action.SCREEN_OFF" />
+                <action android:name="GD.FG"/>
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -73,10 +75,11 @@
 
         <activity
             android:name=".BaseKiosk"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:excludeFromRecents="true"
+            >
             <intent-filter>
             <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.HOME" />
             <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
